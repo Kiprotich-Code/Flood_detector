@@ -14,12 +14,12 @@ class SensorData(db.Model):
     temperature = db.Column(db.Float, nullable=False)
     water_quality = db.Column(db.Float, nullable=False)
     water_conductivity = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     
     def __repr__(self):
         return f"<SensorData {self.id}>"
-    
-with app.app_context():
-    db.create_all()
+
     
 # receiving data from the ESP32
 @app.route('/data', methods=['POST'])
@@ -31,7 +31,9 @@ def receive_data():
         air_liquidity = data['air_liquidity'],
         temperature = data['temperature'],
         water_quality = data['water_quality'],
-        water_conductivity = data['water_conductivity']
+        water_conductivity = data['water_conductivity'],
+        latitude = data['latitude'],
+        longitude = data['longitude']
     )
     
     db.session.add(new_data)
@@ -40,24 +42,50 @@ def receive_data():
     return jsonify({"message": "Data received successfully"}), 201
 
 # displaying data
-@app.route('/data', methods=['GET'])
+# @app.route('/data', methods=['GET'])
+# def display_data():
+#     all_data = SensorData.query.all()
+#     data_list = []
+    
+#     for data in all_data:
+#         data_dict = {
+#             "id":data.id,
+#             "water_level":data.water_level,
+#             "air_liquidity":data.air_liquidity,
+#             "temperature":data.temperature,
+#             "water_quality":data.water_quality,
+#             "water_conductivity":data.water_conductivity,
+#             "latitude":data.latitude,
+#             "longitude":data.longitude
+#         }
+        
+#         data_list.append(data_dict)
+        
+#     return jsonify(data_list), 200
+
+@app.route('/ldata', methods=['GET'])
 def display_data():
     all_data = SensorData.query.all()
+    print(f"Fetched data: {all_data}")  # Debug: Print the fetched data
+    
     data_list = []
     
     for data in all_data:
         data_dict = {
-            "id":data.id,
-            "water_level":data.water_level,
-            "air_liquidity":data.air_liquidity,
-            "temperature":data.temperature,
-            "water_quality":data.water_quality,
-            "water_conductivity":data.water_conductivity
+            "id": data.id,
+            "water_level": data.water_level,
+            "air_liquidity": data.air_liquidity,
+            "temperature": data.temperature,
+            "water_quality": data.water_quality,
+            "water_conductivity": data.water_conductivity,
+            "latitude": data.latitude,
+            "longitude": data.longitude
         }
         
         data_list.append(data_dict)
         
     return jsonify(data_list), 200
+
 
 
 if __name__ == '__main__':
