@@ -1,8 +1,12 @@
+import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flood_detector.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -41,6 +45,10 @@ def receive_data():
     
     return jsonify({"message": "Data received successfully"}), 201
 
+
+with app.app_context():
+    db.create_all()
+
 # displaying data
 # @app.route('/data', methods=['GET'])
 # def display_data():
@@ -63,7 +71,7 @@ def receive_data():
         
 #     return jsonify(data_list), 200
 
-@app.route('/ldata', methods=['GET'])
+@app.route('/data', methods=['GET'])
 def display_data():
     all_data = SensorData.query.all()
     print(f"Fetched data: {all_data}")  # Debug: Print the fetched data
