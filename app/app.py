@@ -45,32 +45,6 @@ def receive_data():
     
     return jsonify({"message": "Data received successfully"}), 201
 
-
-with app.app_context():
-    db.create_all()
-
-# displaying data
-# @app.route('/data', methods=['GET'])
-# def display_data():
-#     all_data = SensorData.query.all()
-#     data_list = []
-    
-#     for data in all_data:
-#         data_dict = {
-#             "id":data.id,
-#             "water_level":data.water_level,
-#             "air_liquidity":data.air_liquidity,
-#             "temperature":data.temperature,
-#             "water_quality":data.water_quality,
-#             "water_conductivity":data.water_conductivity,
-#             "latitude":data.latitude,
-#             "longitude":data.longitude
-#         }
-        
-#         data_list.append(data_dict)
-        
-#     return jsonify(data_list), 200
-
 @app.route('/data', methods=['GET'])
 def display_data():
     all_data = SensorData.query.all()
