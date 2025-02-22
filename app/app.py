@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config
+from .config import Config
 from models.sensor_model import db
 from routes.sensor_routes import sensor_bp
 
